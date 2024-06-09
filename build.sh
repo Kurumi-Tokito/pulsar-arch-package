@@ -82,6 +82,9 @@ cp "$dir/PKGBUILD" "$pkgdir"
 
 cd "$pkgdir" && echo "Entering PKG-DIR: $(pwd)" || exit 1
 
+# Change Owners
+chown -R user:user "$buildir"
+
 sudo -u user bash <<EXC
 makepkg -CL
 EXC
