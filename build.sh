@@ -12,11 +12,15 @@ export PKGVER="1.117.0"
 echo "Install & upgrading Build Packages"
 pacman -Syuu --noconfirm --needed base-devel libxkbfile libsecret libx11 libxcrypt-compat jq git wget python-setuptools
 
-# get gcc12 from ArchLinux Archives
+# Get gcc12 from ArchLinux Archives
 wget -q https://archive.archlinux.org/packages/g/gcc12-libs/gcc12-libs-12.2.1-1-x86_64.pkg.tar.zst
 wget -q https://archive.archlinux.org/packages/g/gcc12/gcc12-12.2.1-1-x86_64.pkg.tar.zst
 pacman -U gcc12-libs-12.2.1-1-x86_64.pkg.tar.zst --noconfirm
 pacman -U gcc12-12.2.1-1-x86_64.pkg.tar.zst --noconfirm
+
+# Get nvm Node Manager
+wget -q https://github.com/Ivy-Tokito/aur-package-builder/releases/download/v0.39.7-1/nvm-0.39.7-1-any.pkg.tar.zst
+pacman -U nvm-0.39.7-1-any.pkg.tar.zst --noconfirm
 pacman -Syuu --noconfirm --needed
 
 mkdir -p "$buildir"
@@ -31,10 +35,6 @@ git submodule init && git submodule update
 sed -i -e "s/[0-9]*-dev/`date -u +%Y%m%d%H`/g" package.json
 
 cd "$buildir/pulsar" && echo "Entering pulsar source:$(pwd)" || exit 1
-# instal nvm node manager
-wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && source $NVM_DIR/nvm.sh
 
 # Install & Update node
 nvm install
