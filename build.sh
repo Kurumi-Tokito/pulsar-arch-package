@@ -29,6 +29,13 @@ source /usr/share/nvm/nvm.sh
 source /usr/share/nvm/bash_completion
 source /usr/share/nvm/install-nvm-exec
 
+# create non-privileged user for makepkg
+groupadd sudo
+useradd -m user || true
+usermod -aG sudo user
+echo "## Allow user to execute any root command
+user ALL=(ALL) NOPASSWD: /usr/bin/pacman" >> "/etc/sudoers"
+
 mkdir -p "$buildir"
 cd "$buildir" && echo "Entering BUILD DIR:$(pwd)" || exit 1
 
@@ -74,7 +81,11 @@ cp "$dir/pulsar.desktop" "$pkgdir"
 cp "$dir/PKGBUILD" "$pkgdir"
 
 cd "$pkgdir" && echo "Entering PKG-DIR: $(pwd)" || exit 1
+
+sudo -u user bash <<EXC
 makepkg -CL
+EXC
+
 cp "pulsar-$PKGVER-0-x86_64-v3.pkg.tar.zst" "$outdir"
 
 mkdir -p /build/packages
