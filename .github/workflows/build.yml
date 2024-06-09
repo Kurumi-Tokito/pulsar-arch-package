@@ -1,0 +1,48 @@
+name: Build Pulsar Binaries
+
+on:
+  push:
+    branches:
+      - 'master'
+  workflow_dispatch:
+
+jobs:
+  build:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux
+      options: --privileged
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: bash build.sh
+
+      - name: Get Release Description
+        id: description
+        run: |
+          echo -e $(curl -s https://api.github.com/repos/pulsar-edit/pulsar/releases/latest | jq -r '.body') > build.md
+          DELIM="$(openssl rand -hex 8)"
+          echo "BUILD_LOG<<${DELIM}" >> "$GITHUB_OUTPUT"
+          cat build.md >> "$GITHUB_OUTPUT"
+          echo "${DELIM}" >> "$GITHUB_OUTPUT"
+
+      - name: Get Tag
+        id: build_tag
+        run: |
+          TAG="$(grep "PKGVER" build.sh | awk -F '=' '{print $2}')"
+          echo "BUILD_TAG=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Upload To Release
+        uses: svenstaro/upload-release-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          file: /build/packages/pulsar*.pkg*
+          release_name: Pulsar Arch Package Release
+          body: ${{ steps.description.outputs.BUILD_LOG }}
+          tag: ${{ steps.build_tag.outputs.BUILD_TAG }}
+          file_glob: true
