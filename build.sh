@@ -10,14 +10,14 @@ outdir="$buildir/out"
 export PKGVER="1.117.0"
 
 echo "Install & upgrading Build Packages"
-sudo pacman -Syuu --noconfirm --needed base-devel libxkbfile libsecret libx11 libxcrypt-compat jq git wget python-setuptools
+pacman -Syuu --noconfirm --needed base-devel libxkbfile libsecret libx11 libxcrypt-compat jq git wget python-setuptools
 
 # get gcc12 from ArchLinux Archives
 wget -q https://archive.archlinux.org/packages/g/gcc12-libs/gcc12-libs-12.2.1-1-x86_64.pkg.tar.zst
 wget -q https://archive.archlinux.org/packages/g/gcc12/gcc12-12.2.1-1-x86_64.pkg.tar.zst
-sudo pacman -U gcc12-libs-12.2.1-1-x86_64.pkg.tar.zst --noconfirm
-sudo pacman -U gcc12-12.2.1-1-x86_64.pkg.tar.zst --noconfirm
-sudo pacman -Syuu --noconfirm --needed
+pacman -U gcc12-libs-12.2.1-1-x86_64.pkg.tar.zst --noconfirm
+pacman -U gcc12-12.2.1-1-x86_64.pkg.tar.zst --noconfirm
+pacman -Syuu --noconfirm --needed
 
 mkdir -p "$buildir"
 cd "$buildir" && echo "Entering BUILD DIR:$(pwd)" || exit 1
