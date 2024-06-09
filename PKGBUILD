@@ -1,5 +1,5 @@
 pkgname="pulsar"
-pkgver="$PKGVER"
+pkgver=""
 pkgrel=0
 pkgdesc="A community-led hyper-hackable text editor, built on electron"
 arch=("x86_64")

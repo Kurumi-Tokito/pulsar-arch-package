@@ -21,7 +21,9 @@ jobs:
       - name: Build
         env:
           PKGVER: "1.117.0"
-        run: bash build.sh
+        run: |
+          sed -i "s/\(pkgver=\"\)[^\"]*\"/\1$PKGVER\"/" PKGBUILD
+          bash build.sh
 
       - name: Get Release Description
         id: description
