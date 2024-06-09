@@ -7,8 +7,6 @@ buildir="$(pwd)/build"
 pkgdir="$buildir/pkg"
 outdir="$buildir/out"
 
-export PKGVER="1.117.0"
-
 echo "Install & upgrading Build Packages"
 pacman -Syuu --noconfirm --needed base-devel libxkbfile libsecret libx11 libxcrypt-compat jq git wget python-setuptools
 
