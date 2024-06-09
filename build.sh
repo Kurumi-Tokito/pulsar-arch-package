@@ -74,7 +74,7 @@ echo -e "\n\nBuild Completed!"
 
 # package
 mkdir -p "$pkgdir"
-cp "$buildir/pulsar/binaries/pulsar-$PKGVER.tar.gz" "pkgdir"
+cp "$buildir/pulsar/binaries/pulsar-$PKGVER.tar.gz" "$pkgdir"
 cp "$dir/pulsar.desktop" "$pkgdir"
 cp "$dir/PKGBUILD" "$pkgdir"
 
