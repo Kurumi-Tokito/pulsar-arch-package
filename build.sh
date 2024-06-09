@@ -23,6 +23,12 @@ wget -q https://github.com/Ivy-Tokito/aur-package-builder/releases/download/v0.3
 pacman -U nvm-0.39.7-1-any.pkg.tar.zst --noconfirm
 pacman -Syuu --noconfirm --needed
 
+# Source nvm
+[ -z "$NVM_DIR" ] && export NVM_DIR="$HOME/.nvm"
+source /usr/share/nvm/nvm.sh
+source /usr/share/nvm/bash_completion
+source /usr/share/nvm/install-nvm-exec
+
 mkdir -p "$buildir"
 cd "$buildir" && echo "Entering BUILD DIR:$(pwd)" || exit 1
 
