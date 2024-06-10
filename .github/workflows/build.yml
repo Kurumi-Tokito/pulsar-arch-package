@@ -26,19 +26,19 @@ jobs:
       - name: Build x86_64
         env:
           PKGVER: ${{ inputs.VERSION }}
-          ARCH: x86_64
+          ARCH: x86-64
         run: |
           sed -i "s/\(pkgver=\"\)[^\"]*\"/\1$PKGVER\"/" PKGBUILD
-          sed -i "s/\(arch=\"\)[^\"]*\"/\1$ARCH\"/" PKGBUILD
+          sed -i "s/\(arch=(\"\)[^\")]*\"/\1x86_64\"/" PKGBUILD
           bash build.sh
 
       - name: Build x86_64-v3
         env:
           PKGVER: ${{ inputs.VERSION }}
-          ARCH: x86_64-v3
+          ARCH: x86-64-v3
         run: |
           sed -i "s/\(pkgver=\"\)[^\"]*\"/\1$PKGVER\"/" PKGBUILD
-          sed -i "s/\(arch=\"\)[^\"]*\"/\1$ARCH\"/" PKGBUILD
+          sed -i "s/\(arch=\"\)[^\"]*\"/\1x86_64_v3\"/" PKGBUILD
           bash build.sh
 
       - name: Get Release Description
