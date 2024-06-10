@@ -98,4 +98,4 @@ echo "Packaging Completed!"
 mkdir -p /out/packages
 find "$pkgdir" -type f -name "pulsar*.pkg*" -exec cp -v {} "/out/packages" \;
 
-rm -rf "buildir"
+rm -rf "$buildir"
