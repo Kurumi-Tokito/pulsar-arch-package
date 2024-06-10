@@ -22,12 +22,6 @@ setup() {
     pacman -U nvm-0.39.7-1-any.pkg.tar.zst --noconfirm
     pacman -Syuu --noconfirm --needed
 
-    # Source nvm
-    [ -z "$NVM_DIR" ] && export NVM_DIR="$HOME/.nvm"
-    source /usr/share/nvm/nvm.sh
-    source /usr/share/nvm/bash_completion
-    source /usr/share/nvm/install-nvm-exec
-
     # create non-privileged user for makepkg
     groupadd sudo
     useradd -m user || true
@@ -37,6 +31,11 @@ setup() {
 }
 
 [[ $(command -v gcc-12) ]] || setup
+ # Source nvm
+[ -z "$NVM_DIR" ] && export NVM_DIR="$HOME/.nvm"
+source /usr/share/nvm/nvm.sh
+source /usr/share/nvm/bash_completion
+source /usr/share/nvm/install-nvm-exec
 
 mkdir -p "$buildir"
 cd "$buildir" && echo "Entering BUILD DIR:$(pwd)" || exit 1
@@ -62,8 +61,8 @@ export CC=gcc-12
 export CXX=g++-12
 
 # Optimize flags
-export CFLAGS=" -O3 -flto=auto -fuse-linker-plugin -mtune=generic -march=$ARCH"
-export CXXFLAGS="-O3 -flto=auto -fuse-linker-plugin -mtune=generic -march=$ARCH"
+export CFLAGS=" -O3 -flto=auto -ffat-lto-objects -fuse-linker-plugin -mtune=generic -march=$ARCH"
+export CXXFLAGS="-O3 -flto=auto -ffat-lto-objects -fuse-linker-plugin -mtune=generic -march=$ARCH"
 export LDFLAGS+=" -Wl,--no-keep-memory"
 
 # ccache
