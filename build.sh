@@ -7,32 +7,36 @@ buildir="$(pwd)/build"
 pkgdir="$buildir/pkg"
 outdir="$buildir/out"
 
-echo "Install & upgrading Build Packages"
-pacman -Syuu --noconfirm --needed base-devel libxkbfile libsecret libx11 libxcrypt-compat jq git wget python-setuptools ccache
+setup() {
+    echo "Install & upgrading Build Packages"
+    pacman -Syuu --noconfirm --needed base-devel libxkbfile libsecret libx11 libxcrypt-compat jq git wget python-setuptools ccache
 
-# Get gcc12 from ArchLinux Archives
-wget -q https://archive.archlinux.org/packages/g/gcc12-libs/gcc12-libs-12.2.1-1-x86_64.pkg.tar.zst
-wget -q https://archive.archlinux.org/packages/g/gcc12/gcc12-12.2.1-1-x86_64.pkg.tar.zst
-pacman -U gcc12-libs-12.2.1-1-x86_64.pkg.tar.zst --noconfirm
-pacman -U gcc12-12.2.1-1-x86_64.pkg.tar.zst --noconfirm
+    # Get gcc12 from ArchLinux Archives
+    wget -q https://archive.archlinux.org/packages/g/gcc12-libs/gcc12-libs-12.2.1-1-x86_64.pkg.tar.zst
+    wget -q https://archive.archlinux.org/packages/g/gcc12/gcc12-12.2.1-1-x86_64.pkg.tar.zst
+    pacman -U gcc12-libs-12.2.1-1-x86_64.pkg.tar.zst --noconfirm
+    pacman -U gcc12-12.2.1-1-x86_64.pkg.tar.zst --noconfirm
 
-# Get nvm Node Manager
-wget -q https://github.com/Ivy-Tokito/aur-package-builder/releases/download/v0.39.7-1/nvm-0.39.7-1-any.pkg.tar.zst
-pacman -U nvm-0.39.7-1-any.pkg.tar.zst --noconfirm
-pacman -Syuu --noconfirm --needed
+    # Get nvm Node Manager
+    wget -q https://github.com/Ivy-Tokito/aur-package-builder/releases/download/v0.39.7-1/nvm-0.39.7-1-any.pkg.tar.zst
+    pacman -U nvm-0.39.7-1-any.pkg.tar.zst --noconfirm
+    pacman -Syuu --noconfirm --needed
 
-# Source nvm
-[ -z "$NVM_DIR" ] && export NVM_DIR="$HOME/.nvm"
-source /usr/share/nvm/nvm.sh
-source /usr/share/nvm/bash_completion
-source /usr/share/nvm/install-nvm-exec
+    # Source nvm
+    [ -z "$NVM_DIR" ] && export NVM_DIR="$HOME/.nvm"
+    source /usr/share/nvm/nvm.sh
+    source /usr/share/nvm/bash_completion
+    source /usr/share/nvm/install-nvm-exec
 
-# create non-privileged user for makepkg
-groupadd sudo
-useradd -m user || true
-usermod -aG sudo user
-echo "## Allow user to execute any root command
-user ALL=(ALL) NOPASSWD: /usr/bin/pacman" >> "/etc/sudoers"
+    # create non-privileged user for makepkg
+    groupadd sudo
+    useradd -m user || true
+    usermod -aG sudo user
+    echo "## Allow user to execute any root command
+    user ALL=(ALL) NOPASSWD: /usr/bin/pacman" >> "/etc/sudoers"
+}
+
+[[ $(command -v gcc-12) ]] || setup
 
 mkdir -p "$buildir"
 cd "$buildir" && echo "Entering BUILD DIR:$(pwd)" || exit 1
@@ -89,7 +93,7 @@ chown -R user:user "$buildir"
 sudo -u user bash <<EXC
 makepkg -CL
 EXC
-echo "Packaging Completed" 
+echo "Packaging Completed!" 
 
 mkdir -p /out/packages
 find "$pkgdir" -type f -name "pulsar*.pkg*" -exec cp -v {} "/out/packages" \;
