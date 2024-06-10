@@ -89,12 +89,9 @@ chown -R user:user "$buildir"
 sudo -u user bash <<EXC
 makepkg -CL
 EXC
-
-cp "pulsar-$PKGVER-0-$ARCH.pkg.tar.zst" "$outdir"
+echo "Packaging Completed" 
 
 mkdir -p /out/packages
-find "$outdir" -type f -name "pulsar*.pkg*" -exec cp -v {} "/out/packages" \;
-
-echo "Packaging Completed"
+find "$pkgdir" -type f -name "pulsar*.pkg*" -exec cp -v {} "/out/packages" \;
 
 rm -rf "buildir"
