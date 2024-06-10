@@ -61,8 +61,9 @@ export CC=gcc-12
 export CXX=g++-12
 
 # Optimize flags
-export CFLAGS=" -O3 -flto=auto -ffat-lto-objects -fuse-linker-plugin -mtune=generic -march=$ARCH"
-export CXXFLAGS="-O3 -flto=auto -ffat-lto-objects -fuse-linker-plugin -mtune=generic -march=$ARCH"
+FLAGS="-O3 -flto=auto -ffat-lto-objects -fuse-linker-plugin -mtune=generic -march=$ARCH"
+export CFLAGS="$FLAGS"
+export CXXFLAGS="$FLAGS"
 export LDFLAGS+=" -Wl,--no-keep-memory"
 
 # ccache
@@ -92,9 +93,9 @@ chown -R user:user "$buildir"
 sudo -u user bash <<EXC
 makepkg -CL
 EXC
-echo "Packaging Completed!" 
+echo "Packaging Completed!"
 
 mkdir -p /out/packages
-find "$pkgdir" -type f -name "pulsar*.pkg*" -exec cp -v {} "/out/packages" \;
+cp -v pulsar-$PKGVER-0-x86_64.pkg.tar.zst /out/packages/pulsar-$PKGVER-0-$ARCH.pkg.tar.zst
 
 rm -rf "$buildir"

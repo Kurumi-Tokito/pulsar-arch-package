@@ -75,7 +75,6 @@ jobs:
         env:
           PKGVER: ${{ inputs.VERSION }}
         with:
-          branch: main
           skip_checkout: true
-          file_pattern: .tag
+          file_pattern: '.tag'
           commit_message: "Pulsar: v$PKGVER"
