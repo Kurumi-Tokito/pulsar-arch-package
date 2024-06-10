@@ -2,7 +2,7 @@ pkgname="pulsar"
 pkgver=""
 pkgrel=0
 pkgdesc="A community-led hyper-hackable text editor, built on electron"
-arch=("x86_64")
+arch=""
 url="https://github.com/pulsar-edit/pulsar"
 license=("MIT")
 makedepends=('git' 'wget' 'gcc12' 'libxkbfile' 'libsecret' 'libx11' 'libxcrypt-compat' 'python-setuptools')
@@ -13,7 +13,7 @@ optdepends=(
 )
 provides=("pulsar")
 conflicts=('pulsar' 'pulsar-bin')
-options=('!ccache' '!lto')
+options=('ccache' 'lto')
 source=(
   "git+https://github.com/pulsar-edit/pulsar.git#tag=v$pkgver"
   "pulsar-$pkgver.tar.gz"

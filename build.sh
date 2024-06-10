@@ -8,7 +8,7 @@ pkgdir="$buildir/pkg"
 outdir="$buildir/out"
 
 echo "Install & upgrading Build Packages"
-pacman -Syuu --noconfirm --needed base-devel libxkbfile libsecret libx11 libxcrypt-compat jq git wget python-setuptools
+pacman -Syuu --noconfirm --needed base-devel libxkbfile libsecret libx11 libxcrypt-compat jq git wget python-setuptools ccache
 
 # Get gcc12 from ArchLinux Archives
 wget -q https://archive.archlinux.org/packages/g/gcc12-libs/gcc12-libs-12.2.1-1-x86_64.pkg.tar.zst
@@ -58,9 +58,12 @@ export CC=gcc-12
 export CXX=g++-12
 
 # Optimize flags
-export CFLAGS=" -O3 -flto=auto -fuse-linker-plugin -mtune=generic -march=x86-64-v3"
-export CXXFLAGS="-O3 -flto=auto -fuse-linker-plugin -mtune=generic -march=x86-64-v3"
+export CFLAGS=" -O3 -flto=auto -fuse-linker-plugin -mtune=generic -march=$ARCH"
+export CXXFLAGS="-O3 -flto=auto -fuse-linker-plugin -mtune=generic -march=$ARCH"
 export LDFLAGS+=" -Wl,--no-keep-memory"
+
+# ccache
+export USE_CCACHE=1 CCACHE_EXEC=$(which ccache)
 
 cd "$buildir/pulsar" && echo "Entering pulsar source:$(pwd)" || exit 1
 
@@ -87,10 +90,11 @@ sudo -u user bash <<EXC
 makepkg -CL
 EXC
 
-cp "pulsar-$PKGVER-0-x86_64-v3.pkg.tar.zst" "$outdir"
+cp "pulsar-$PKGVER-0-$ARCH.pkg.tar.zst" "$outdir"
 
-mkdir -p /build/packages
-find "/home/user/build" -type f -name "pulsar*.pkg*" -exec cp -v {} "/build/packages" \;
+mkdir -p /out/packages
+find "$outdir" -type f -name "pulsar*.pkg*" -exec cp -v {} "/out/packages" \;
 
 echo "Packaging Completed"
-echo "Package: $(ls $outdir/*.zst)"
+
+rm -rf "buildir"

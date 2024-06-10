@@ -1,10 +1,15 @@
 name: Build Pulsar Binaries
 
 on:
-  push:
-    branches:
-      - 'master'
-  workflow_dispatch:
+  workflow_call:
+    inputs:
+      from_ci:
+        type: boolean
+        required: false
+        default: true
+      VERSION:
+        type: string
+        required: true
 
 jobs:
   build:
@@ -18,11 +23,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build
+      - name: Build x86_64
         env:
-          PKGVER: "1.117.0"
+          PKGVER: ${{ inputs.VERSION }}
+          ARCH: x86_64
         run: |
           sed -i "s/\(pkgver=\"\)[^\"]*\"/\1$PKGVER\"/" PKGBUILD
+          sed -i "s/\(arch=\"\)[^\"]*\"/\1$ARCH\"/" PKGBUILD
+          bash build.sh
+
+      - name: Build x86_64-v3
+        env:
+          PKGVER: ${{ inputs.VERSION }}
+          ARCH: x86_64-v3
+        run: |
+          sed -i "s/\(pkgver=\"\)[^\"]*\"/\1$PKGVER\"/" PKGBUILD
+          sed -i "s/\(arch=\"\)[^\"]*\"/\1$ARCH\"/" PKGBUILD
           bash build.sh
 
       - name: Get Release Description
@@ -37,7 +53,7 @@ jobs:
       - name: Get Tag
         id: build_tag
         run: |
-          TAG="$(grep "PKGVER" build.sh | awk -F '=' '{print $2}')"
+          TAG="v${{ inputs.VERSION }}"
           echo "BUILD_TAG=$TAG" >> $GITHUB_OUTPUT
 
       - name: Upload To Release
@@ -45,8 +61,21 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          file: /build/packages/pulsar*.pkg*
+          file: /out/packages/pulsar*.pkg*
           release_name: Pulsar Arch Package Release
           body: ${{ steps.description.outputs.BUILD_LOG }}
           tag: ${{ steps.build_tag.outputs.BUILD_TAG }}
           file_glob: true
+
+      - name: Bump Tag
+        env:
+          PKGVER: ${{ inputs.VERSION }}
+        run: sed -i "s/\(Tag=\"\)[^\"]*\"/\1$PKGVER\"/" .tag
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        env:
+          PKGVER: ${{ inputs.VERSION }}
+        with:
+          branch: main
+          skip_checkout: true
+          file_pattern: .tag
+          commit_message: "Pulsar: v$PKGVER"
