@@ -74,17 +74,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-    
+
       - name: Bump Tag
         env:
           PKGVER: ${{ inputs.VERSION }}
         run: sed -i "s/\(Tag=\"\)[^\"]*\"/\1$PKGVER\"/" .tag
 
-      - name: Commit latest tag  
+      - name: Commit latest tag
         uses: stefanzweifel/git-auto-commit-action@v5
-        env:
-          PKGVER: ${{ inputs.VERSION }}
         with:
           skip_checkout: true
           file_pattern: '.tag'
-          commit_message: "Pulsar: v$PKGVER"
+          commit_message: 'Pulsar: ${{ inputs.VERSION }}'
