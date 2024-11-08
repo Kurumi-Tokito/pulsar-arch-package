@@ -61,10 +61,11 @@ export CC=gcc-12
 export CXX=g++-12
 
 # Optimize flags
-FLAGS="-O3 -flto=auto -ffat-lto-objects -fuse-linker-plugin -mtune=generic -march=$ARCH"
-export CFLAGS="$FLAGS"
-export CXXFLAGS="$FLAGS"
-export LDFLAGS+=" -Wl,--no-keep-memory"
+export CFLAGS+=" -O3 -ffp-contract=fast -march=${ARCH}"
+export CPPFLAGS+=" -O3 -ffp-contract=fast -march=${ARCH}"
+export CXXFLAGS+=" -O3 -flto=auto -ffat-lto-objects -ffp-contract=fast -march=${ARCH}"
+export LDFLAGS+=" -Wl,-O3, -march=${ARCH} -Wl,--no-keep-memory -fuse-ld=lld"
+
 
 # ccache
 export USE_CCACHE=1 CCACHE_EXEC=$(which ccache)

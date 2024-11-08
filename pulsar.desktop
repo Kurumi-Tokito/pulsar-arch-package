@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Pulsar
-Exec=/opt/Pulsar/pulsar %U
+Exec=/usr/bin/pulsar %U
 Terminal=false
 Type=Application
 Icon=pulsar

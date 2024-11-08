@@ -13,16 +13,10 @@ optdepends=(
 )
 provides=("pulsar")
 conflicts=('pulsar' 'pulsar-bin')
-options=('ccache' 'lto')
-source=(
-  "git+https://github.com/pulsar-edit/pulsar.git#tag=v$pkgver"
-  "pulsar-$pkgver.tar.gz"
-)
+options=('ccache' 'lto' '!strip' '!debug')
 
-sha256sums=(
-  'SKIP'
-  'SKIP'
-)
+source=("pulsar-$pkgver.tar.gz")
+sha256sums=('SKIP')
 
 prepare() {
   bsdtar xf "pulsar-$pkgver.tar.gz"
@@ -30,27 +24,28 @@ prepare() {
 
 package() {
   # Pulsar-pkg
-  mkdir "$pkgdir/opt"
-  mv "$srcdir/pulsar-$pkgver"  "$pkgdir/opt/Pulsar"
+  mkdir -p "$pkgdir/usr/lib"
+  mv "$srcdir/pulsar-$pkgver"  "$pkgdir/usr/lib/pulsar"
 
-  # pulsar.desktop
+  # Pulsar.desktop
   mkdir -p "$pkgdir/usr/share/applications"
   cp ../pulsar.desktop "$pkgdir/usr/share/applications/pulsar.desktop"
 
   # Pulsar-Icons
-  for icon in '384x384' '256x256' '128x128' '64x64' '48x48' '32x32' '24x24' '22x22' '16x16'; do
-    mkdir -p "$pkgdir/usr/share/icons/hicolor/$icon/apps"
-    cp -v "$srcdir/pulsar/resources/icons/$icon.png" "$pkgdir/usr/share/icons/hicolor/$icon/apps/pulsar.png"
+  for i in 16 22 32 48 64 128 256 384; do
+    mkdir -p "$pkgdir/usr/share/icons/hicolor/${i}x${i}/apps"
+    curl -o "$pkgdir/usr/share/icons/hicolor/${i}x${i}/apps/pulsar.png" \
+      https://raw.githubusercontent.com/pulsar-edit/pulsar/master/resources/icons/${i}x${i}.png
   done
 
   # Cleanup specs. Remove if implemented upstream
-  find "$pkgdir/opt/Pulsar/resources/app/ppm" -type d -name "spec" -exec rm -rf {} +
-  find "$pkgdir/opt/Pulsar/resources/app.asar.unpacked" -type d -name "spec" -exec rm -rf {} +
+  find "$pkgdir/usr/lib/pulsar/resources/app/ppm" -depth -name "spec" -exec rm -rf {} +
+  find "$pkgdir/usr/lib/pulsar/resources/app.asar.unpacked" -depth -name "spec" -exec rm -rf {} +
 
-  install -Dm644 "$pkgdir/opt/Pulsar/resources/pulsar.svg" -t "$pkgdir/usr/share/icons/hicolor/scalable/apps"
+  install -Dm644 "$pkgdir/usr/lib/pulsar/resources/pulsar.svg" -t "$pkgdir/usr/share/icons/hicolor/scalable/apps"
 
   install -Dm755 -d "$pkgdir/usr/bin"
-  chmod +x "$pkgdir/opt/Pulsar/resources/pulsar.sh"
+  chmod +x "$pkgdir/usr/lib/pulsar/resources/pulsar.sh"
 
-  ln -sf "/opt/Pulsar/resources/pulsar.sh" "$pkgdir/usr/bin/pulsar"
+  ln -sf "/usr/lib/pulsar/resources/pulsar.sh" "$pkgdir/usr/bin/pulsar"
 }
